@@ -130,4 +130,34 @@ public class HMap<K, V> {
             }
         }
     }
+
+    public List<K> keyList(){
+        List<K> keyList = new LinkedList<>();
+        for(List<Entry> list : lists){
+            for(Entry entry : list){
+                keyList.add(entry.key);
+            }
+        }
+        return keyList;
+    }
+
+    public List<V> valueList(){
+        List<V> valueList = new LinkedList<>();
+        for(List<Entry> list : lists){
+            for(Entry entry : list){
+                valueList.add(entry.value);
+            }
+        }
+        return valueList;
+    }
+
+    public List<Entry> entryList(){
+        List<Entry> entryList = new LinkedList<>();
+        for(List<Entry> list : lists){
+            for(Entry entry : list){
+                entryList.add(entry);
+            }
+        }
+        return entryList;
+    }
 }
