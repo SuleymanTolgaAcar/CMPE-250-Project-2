@@ -66,34 +66,45 @@ public class Branch {
 
             case "COOK":
                 if(cookCount == 1) return;
+                employee.role = "LEFT";
                 cookCount--;
                 break;
 
             case "MANAGER":
-                if(!cookQueue.isEmpty() && cookCount > 1){
+                if(cookCount > 1 && cookQueue.size() > 0){
                     Employee cookToPromote = cookQueue.poll();
-                    writer.write(cookToPromote.name + " is promoted from Cook to Manager.\n");
+                    while((cookToPromote.promotionPoint < 10 || !cookToPromote.role.equals("COOK")) && cookQueue.size() > 0){
+                        cookToPromote = cookQueue.poll();
+                    }
+                    if(cookToPromote.promotionPoint < 10 || !cookToPromote.role.equals("COOK")) return;
                     cookToPromote.role = "MANAGER";
                     cookToPromote.promotionPoint -= 10;
                     manager = cookToPromote;
                     cookCount--;
-                    cookToPromote = null;
                 }
                 else return;
                 break;
         }
-
+            
         employee.bonus -= 200;
         monthlyBonus -= 200;
         totalBonus -= 200;
-
+        
+        writer.write(employee.name + " is leaving from branch: " + district + ".\n");
+        if(employee.role.equals("MANAGER") && !manager.name.equals(employee.name)){
+            writer.write(manager.name + " is promoted from Cook to Manager.\n");
+        }
         employees.remove(employee.name);
     }
 
     public void setEmployeeScore(Employee employee, int score){
-        employee.setScore(score);
-        monthlyBonus += employee.bonus;
-        totalBonus += employee.bonus;
+        employee.score = score;
+        employee.promotionPoint += score / 200;
+        if(score > 0){
+            employee.bonus += score % 200;
+            monthlyBonus += score % 200;
+            totalBonus += score % 200;
+        }
     }
 
     public Employee get(String name){
@@ -126,6 +137,7 @@ public class Branch {
                 }
                 else if(employee.promotionPoint <= -5 && cookCount > 1){
                     writer.write(employee.name + " is dismissed from branch: " + this.district + ".\n");
+                    employee.role = "LEFT";
                     employees.remove(employee.name);
                     cookCount--;
                 }
@@ -135,6 +147,10 @@ public class Branch {
                 if(employee.promotionPoint <= -5 && !cookQueue.isEmpty() && cookCount > 1){
                     writer.write(employee.name + " is dismissed from branch: " + this.district + ".\n");
                     Employee cookToPromote = cookQueue.poll();
+                    while(cookToPromote.promotionPoint < 10 || !cookToPromote.role.equals("COOK")){
+                        cookToPromote = cookQueue.poll();
+                    }
+                    if(cookToPromote.promotionPoint < 10 || !cookToPromote.role.equals("COOK")) return;
                     writer.write(cookToPromote.name + " is promoted from Cook to Manager.\n");
                     cookToPromote.role = "MANAGER";
                     cookToPromote.promotionPoint -= 10;

@@ -4,9 +4,9 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        File initialFile = new File("small_cases/inputs/initial2.txt");
+        File initialFile = new File("small_cases/inputs/initial4.txt");
         Scanner initialScanner = new Scanner(initialFile);
-        File operationsFile = new File("small_cases/inputs/input2.txt");
+        File operationsFile = new File("small_cases/inputs/input4.txt");
         Scanner operationsScanner = new Scanner(operationsFile);
         FileWriter writer = new FileWriter("small_cases/outputs/output.txt");
         HMap<String, Branch> branches = new HMap<>();
@@ -56,7 +56,6 @@ public class App {
                         writer.write("There is no such employee.\n");
                         break;
                     }
-                    writer.write(employee.name + " is leaving from branch: " + branch.district + ".\n");
                     branch.remove(employee, writer);
                     break;
 

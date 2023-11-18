@@ -3,7 +3,7 @@ public class Employee {
     public String city;
     public String district;
     public String role;
-    private int score;
+    public int score;
     public int bonus;
     public int promotionPoint;
 
@@ -12,18 +12,6 @@ public class Employee {
         this.city = city;
         this.district = district;
         this.role = role;
-    }
-
-    public void setScore(int score){
-        this.score = score;
-        this.promotionPoint += score / 200;
-        if(score > 0){
-            this.bonus = score % 200;
-        }
-    }
-
-    public int getScore(){
-        return this.score;
     }
 
     public String toString(){
