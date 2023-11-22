@@ -13,7 +13,7 @@ public class HMap<K, V> {
     }
 
     private static final int DEFAULT_CAPACITY = 101;
-    private static final double DEFAULT_LOAD_FACTOR = 0.75;
+    private static final double DEFAULT_LOAD_FACTOR = 2;
     private int size;
     private List<Entry>[] lists;
 

@@ -4,11 +4,12 @@ import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        File initialFile = new File("small_cases/inputs/initial4.txt");
+        double start = System.currentTimeMillis();
+        File initialFile = new File("testcases/inputs/large_initial5.txt");
         Scanner initialScanner = new Scanner(initialFile);
-        File operationsFile = new File("small_cases/inputs/input4.txt");
+        File operationsFile = new File("testcases/inputs/large5.txt");
         Scanner operationsScanner = new Scanner(operationsFile);
-        FileWriter writer = new FileWriter("small_cases/outputs/output.txt");
+        FileWriter writer = new FileWriter("testcases/outputs/output.txt");
         HMap<String, Branch> branches = new HMap<>();
 
         while (initialScanner.hasNextLine()) {
@@ -25,15 +26,17 @@ public class App {
             }
 
             Employee employee = new Employee(city, district, name, role);
-            branch.put(name, employee, writer);
+            branch.put(employee, writer);
         }
         
         while(operationsScanner.hasNextLine()){
             String[] line = operationsScanner.nextLine().split(": ");
 
             if(line.length <= 1){
-                for(Branch branch: branches.valueList()){
-                    branch.monthlyBonus = 0;
+                if(!line[0].equals("")){
+                    for(Branch branch: branches.valueList()){
+                        branch.monthlyBonus = 0;
+                    }
                 }
                 continue;
             }
@@ -47,25 +50,17 @@ public class App {
             switch(operation){
                 case "ADD":
                     employee = new Employee(city, district, params[2], params[3]);
-                    branch.put(params[2], employee, writer);
+                    branch.put(employee, writer);
                     break;
 
                 case "LEAVE":
                     employee = branch.get(params[2]);
-                    if(employee == null){
-                        writer.write("There is no such employee.\n");
-                        break;
-                    }
                     branch.remove(employee, writer);
                     break;
 
                 case "PERFORMANCE_UPDATE":
                     employee = branch.get(params[2]);
-                    if(employee == null){
-                        writer.write("There is no such employee.\n");
-                        break;
-                    }
-                    branch.setEmployeeScore(employee, Integer.parseInt(params[3]));
+                    branch.setEmployeeScore(employee, Integer.parseInt(params[3]), writer);
                     branch.promotion(employee, writer);
                     break;
 
@@ -86,5 +81,7 @@ public class App {
         initialScanner.close();
         operationsScanner.close();
         writer.close();
+        double end = System.currentTimeMillis();
+        System.out.println("Time: " + (end - start) / 1000 + " seconds");
     }
 }
