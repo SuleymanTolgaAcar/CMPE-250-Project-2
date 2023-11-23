@@ -185,7 +185,13 @@ public class Branch {
 
     /**
      * Checks if the given employee should be promoted or dismissed, and does the necessary operations.
-     * For each role, if the employee's promotion point is less than -5, dismisses the employee if 
+     * For each role, if the employee's promotion point is less than -5, dismisses the employee if it is not the only employee in that role.
+     * If it is the only employee in that role, sets the only employee in that role to the employee.
+     * For cashiers, if the employee's promotion point is greater than or equal to 3, promotes the employee to cook if it is not the only employee in that role.
+     * If it is the only employee in that role, sets the only employee in that role to the employee.
+     * For cooks, if the employee's promotion point is greater than or equal to 10, adds the employee to the cook queue.
+     * For the manager, if the employee's promotion point is less than -5, checks if there is a cook waiting to be promoted to manager.
+     * If there is, promotes the cook and dismisses the manager.
      */
     public void promotion(Employee employee, FileWriter writer) throws Exception {
         if(employee == null) return;
