@@ -1,15 +1,23 @@
+/**
+ * @autor Süleyman Tolga Acar
+ * @date 23.11.2023
+ */
+
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Scanner;
 
+/**
+ * Main class of the project.
+ * Reads the input files and writes the output to the output file.
+ */
 public class App {
     public static void main(String[] args) throws Exception {
-        double start = System.currentTimeMillis();
-        File initialFile = new File("testcases/inputs/large_initial5.txt");
+        File initialFile = new File(args[0]);
         Scanner initialScanner = new Scanner(initialFile);
-        File operationsFile = new File("testcases/inputs/large5.txt");
+        File operationsFile = new File(args[1]);
         Scanner operationsScanner = new Scanner(operationsFile);
-        FileWriter writer = new FileWriter("testcases/outputs/output.txt");
+        FileWriter writer = new FileWriter(args[2]);
         HMap<String, Branch> branches = new HMap<>();
 
         while (initialScanner.hasNextLine()) {
@@ -81,7 +89,5 @@ public class App {
         initialScanner.close();
         operationsScanner.close();
         writer.close();
-        double end = System.currentTimeMillis();
-        System.out.println("Time: " + (end - start) / 1000 + " seconds");
     }
 }

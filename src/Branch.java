@@ -2,6 +2,11 @@ import java.io.FileWriter;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Has data fields for city, district, courier count, cashier count, cook count, monthly bonus, total bonus, manager.
+ * Has a cook queue for the cooks waiting to be promoted to manager.
+ * Has a hash map for the employees.
+ */
 public class Branch {
     public String city;
     public String district;
@@ -11,41 +16,60 @@ public class Branch {
     public int monthlyBonus;
     public int totalBonus;
     public Employee manager;
+    // These are used when there is only one employee in that role.
     public Employee onlyCourier;
     public Employee onlyCashier;
     public Employee onlyCook;
+    /**
+     * Queue for the cooks waiting to be promoted to manager.
+     */
     public Queue<Employee> cookQueue;
+    /**
+     * Hash map for the employees.
+     */
     private HMap<String, Employee> employees;
 
+    /**
+     * Constructor for the Branch class.
+     * İnitiliazes the hash map and cook queue.
+     */
     public Branch(String city, String district) {
         this.city = city;
         this.district = district;
         this.employees = new HMap<>();
         this.cookQueue = new LinkedList<>();
-        this.courierCount = 0;
-        this.cashierCount = 0;
-        this.cookCount = 0;
     }
     
+    /**
+     * Gets the employee with the given name.
+     * @return employee
+     */
     public Employee get(String name){
         return employees.get(name);
     }
 
+    /**
+     * Sets the employee score.
+     * If the score is positive, adds the remainder of the score divided by 200 to the monthly bonus and total bonus.
+     */
     public void setEmployeeScore(Employee employee, int score, FileWriter writer) throws Exception {
         if(employee == null){
             writer.write("There is no such employee.\n");
             return;
         }
 
-        employee.score = score;
         employee.promotionPoint += score / 200;
         if(score > 0){
-            employee.bonus += score % 200;
             monthlyBonus += score % 200;
             totalBonus += score % 200;
         }
     }
 
+    /**
+     * Puts the given employee into the hash map.
+     * For each role, checks if there was only one employee in that role before the addition.
+     * If there was, calls the promotion method for that employee to check if they should be promoted or dismissed.
+     */
     public void put(Employee employee, FileWriter writer) throws Exception {
         if(employees.containsKey(employee.name)){
             writer.write("Existing employee cannot be added again.\n");
@@ -81,6 +105,13 @@ public class Branch {
         }
     }
 
+    /**
+     * Removes the given employee from the hash map.
+     * For each role, checks if there is only one employee in that role.
+     * If there is, the employee can't leave the branch, so they get a bonus of 200.
+     * For the manager, checks if there is a cook waiting to be promoted to manager.
+     * If there is, promotes the cook and removes the manager.
+     */
     public void remove(Employee employee, FileWriter writer) throws Exception {
         if(employee == null){
             writer.write("There is no such employee.\n");
@@ -91,7 +122,6 @@ public class Branch {
             case "COURIER":
                 if(courierCount == 1){
                     if(employee.promotionPoint > -5){
-                        employee.bonus += 200;
                         monthlyBonus += 200;
                         totalBonus += 200;
                     }
@@ -106,7 +136,6 @@ public class Branch {
             case "CASHIER":
                 if(cashierCount == 1){
                     if(employee.promotionPoint > -5){
-                        employee.bonus += 200;
                         monthlyBonus += 200;
                         totalBonus += 200;
                     }
@@ -121,7 +150,6 @@ public class Branch {
             case "COOK":
                 if(cookCount == 1){
                     if(employee.promotionPoint > -5){
-                        employee.bonus += 200;
                         monthlyBonus += 200;
                         totalBonus += 200;
                     }
@@ -137,7 +165,6 @@ public class Branch {
             case "MANAGER":
                 if(cookCount == 1 || cookQueue.size() == 0){
                     if(employee.promotionPoint > -5){
-                        employee.bonus += 200;
                         monthlyBonus += 200;
                         totalBonus += 200;
                     }
@@ -149,9 +176,6 @@ public class Branch {
                     cookCount--;
                     writer.write(employee.name + " is leaving from branch: " + district + ".\n");
                     writer.write(newManager.name + " is promoted from Cook to Manager.\n");
-                    if(newManager.name.equals("Dilsozi Seker")){
-                        System.out.println(newManager.promotionPoint + " " + newManager.role + " " + cookCount + " " + cookQueue.size());
-                    }
                     employees.remove(employee.name);
                     manager = newManager;
                 }
@@ -159,6 +183,10 @@ public class Branch {
         }
     }
 
+    /**
+     * Checks if the given employee should be promoted or dismissed, and does the necessary operations.
+     * For each role, if the employee's promotion point is less than -5, dismisses the employee if 
+     */
     public void promotion(Employee employee, FileWriter writer) throws Exception {
         if(employee == null) return;
 
